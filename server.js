@@ -41,13 +41,26 @@ app.get('/', function (req, res) {
 })
 
 app.get('/:encoded', function (req, res) {
+    var str = req.params['encoded']
+    console.log(str)
+    var id = utils.strToBase10(str)
+    console.log(id)
+    Url.findOne({ _id: id }, function (err, doc) {
+        if (doc) {
+            console.log(doc.long_url)
+            res.redirect(doc.long_url)
+
+        } else {
+            res.send('Sorry, this is not in the database')
+        }
+    })
    
 })
 
 app.get('/new/:longurl', function (req, res) {
     var shortUrl = ''
     var longUrl = req.params['longurl']
-    Url.findOne({longurl: longUrl}, function (err, doc) {
+    Url.findOne({long_url: longUrl}, function (err, doc) {
         if (doc) {
             shortUrl = "http://localhost:27017/" + utils.base10To58(doc._id)
             res.send({
@@ -64,9 +77,9 @@ app.get('/new/:longurl', function (req, res) {
                if (err) {
                    console.log(err)
                } else {
-                    shortUrl = "http://localhost:27017/" + utils.base10To58(doc._id)
+                    shortUrl = "http://localhost:27017/" + utils.base10To58(newUrl._id)
                     res.send({
-                    'longurl': doc.long_url,
+                    'longurl': newUrl.long_url,
                     'shorturl': shortUrl
                     
                 })
@@ -74,7 +87,7 @@ app.get('/new/:longurl', function (req, res) {
             });
         }
     })
-    res.end(longUrl.toString())
+    
 })
 
 app.listen(process.env.PORT || '8080')
