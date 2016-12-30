@@ -43,22 +43,6 @@ app.get('/', function (req, res) {
     res.send('Enter url as the parameter after /new, and receive a shortened url!')
 })
 
-app.get('/:encoded', function (req, res) {
-    var str = req.params['encoded']
-    console.log(str)
-    var id = utils.strToBase10(str)
-    console.log(id)
-    Url.findOne({ _id: id }, function (err, doc) {
-        if (doc) {
-            console.log(doc.long_url)
-            res.redirect(doc.long_url)
-
-        } else {
-            res.redirect("/")
-        }
-    })
-   
-})
 
 app.get('/new/:longurl', function (req, res) {
     var shortUrl = ''
@@ -92,6 +76,30 @@ app.get('/new/:longurl', function (req, res) {
     })
     
 })
+
+
+app.get('/:encoded', function (req, res) {
+    var str = req.params['encoded']
+    console.log(str)
+    var id = utils.strToBase10(str)
+    console.log(id)
+    Url.findOne({ _id: id }, function (err, doc) {
+        if (err) {
+            console.log(err)
+        }
+        if (doc) {
+            console.log(doc)
+            console.log(doc.long_url.toString())
+            // return res.redirect('http://google.com')
+            window.location.href = doc.long_url
+
+        } else {
+            res.redirect("/shitshow")
+        }
+    })
+   
+})
+
 
 app.listen(process.env.PORT || '8080')
 
