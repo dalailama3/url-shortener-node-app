@@ -1,6 +1,9 @@
 var utils = require('./utilities.js')
 var express = require('express')
 var mongoose = require('mongoose')
+var mongoUrl = process.env.MONGOLAB_URI
+console.log(mongoUrl)
+
 
 var app = express()
 
@@ -25,7 +28,6 @@ urlSchema.pre('save', function (next) {
     counter.findByIdAndUpdate({_id: 'url_count'}, {$inc: {seq: 1} }, function(error, counter) {
       if (error)
           return next(error);
-      // set the _id of the urls collection to the incremented value of the counter
       entry._id = counter.seq;
       entry.created_at = new Date();
       next();
@@ -34,10 +36,11 @@ urlSchema.pre('save', function (next) {
 
 var Url = mongoose.model('Url', urlSchema)
 
-mongoose.connect('mongodb://localhost:27017/url_shortener');
+
+mongoose.connect(mongoUrl);
 
 app.get('/', function (req, res) {
-    res.send('Enter url as the a parameter, and receive a shortened url!')
+    res.send('Enter url as the parameter after /new, and receive a shortened url!')
 })
 
 app.get('/:encoded', function (req, res) {
@@ -51,7 +54,7 @@ app.get('/:encoded', function (req, res) {
             res.redirect(doc.long_url)
 
         } else {
-            res.send('Sorry, this is not in the database')
+            res.redirect("/")
         }
     })
    
