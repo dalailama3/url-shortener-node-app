@@ -65,7 +65,7 @@ app.get('/new/:longurl', function (req, res) {
     var longUrl = req.params['longurl']
     Url.findOne({long_url: longUrl}, function (err, doc) {
         if (doc) {
-            shortUrl = "http://localhost:27017/" + utils.base10To58(doc._id)
+            shortUrl = 'https://aqueous-sierra-51876.herokuapp.com/' + utils.base10To58(doc._id)
             res.send({
                 'longurl': doc.long_url,
                 'shorturl': shortUrl
@@ -80,7 +80,7 @@ app.get('/new/:longurl', function (req, res) {
                if (err) {
                    console.log(err)
                } else {
-                    shortUrl = "http://localhost:27017/" + utils.base10To58(newUrl._id)
+                    shortUrl = "https://aqueous-sierra-51876.herokuapp.com/" + utils.base10To58(newUrl._id)
                     res.send({
                     'longurl': newUrl.long_url,
                     'shorturl': shortUrl
