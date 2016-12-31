@@ -2,6 +2,7 @@ var utils = require('./utilities.js')
 var express = require('express')
 var mongoose = require('mongoose')
 var mongoUrl = process.env.MONGOLAB_URI
+var validUrl = require('valid-url')
 console.log(mongoUrl)
 
 
@@ -47,7 +48,8 @@ app.get('/', function (req, res) {
 app.get('/new/:longurl(*)', function (req, res) {
     var shortUrl = ''
     var longUrl = req.params['longurl']
-    Url.findOne({long_url: longUrl}, function (err, doc) {
+    if (validUrl.isUri(longUrl)) {
+            Url.findOne({long_url: longUrl}, function (err, doc) {
         if (doc) {
             shortUrl = 'https://aqueous-sierra-51876.herokuapp.com/' + utils.base10To58(doc._id)
             res.send({
@@ -74,6 +76,11 @@ app.get('/new/:longurl(*)', function (req, res) {
             });
         }
     })
+        
+    } else {
+        res.send("Url is invalid")
+    }
+
     
 })
 
@@ -90,7 +97,7 @@ app.get('/:encoded', function (req, res) {
       res.redirect(301, 'http://' + doc.long_url);
 
     } else {
-      console.log("shit")
+      res.send("That shortened url is not in the database.")
     }
   });
 
