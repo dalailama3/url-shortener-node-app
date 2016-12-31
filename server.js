@@ -88,13 +88,10 @@ app.get('/new/:longurl(*)', function (req, res) {
 
 app.get('/:encoded', function (req, res) {
     var str = req.params.encoded
-    console.log(str)
     var id = utils.strToBase10(str)
-    console.log(id)
     Url.findOne({_id: id}, function (err, doc){
     if (doc) {
-      console.log('http://' + doc.long_url)
-      res.redirect(301, 'http://' + doc.long_url);
+      res.redirect(301, doc.long_url);
 
     } else {
       res.send("That shortened url is not in the database.")
