@@ -40,11 +40,11 @@ var Url = mongoose.model('Url', urlSchema)
 mongoose.connect(mongoUrl);
 
 app.get('/', function (req, res) {
-    res.send('Enter url as the parameter after /new, and receive a shortened url!')
+    res.send('Enter url as the parameter after /new, and receive a shortened url! \n Original url will be accessible at shortened url now.')
 })
 
 
-app.get('/new/:longurl', function (req, res) {
+app.get('/new/:longurl(*)', function (req, res) {
     var shortUrl = ''
     var longUrl = req.params['longurl']
     Url.findOne({long_url: longUrl}, function (err, doc) {
@@ -78,25 +78,22 @@ app.get('/new/:longurl', function (req, res) {
 })
 
 
+
 app.get('/:encoded', function (req, res) {
-    var str = req.params['encoded']
+    var str = req.params.encoded
     console.log(str)
     var id = utils.strToBase10(str)
     console.log(id)
-    Url.findOne({ _id: id }, function (err, doc) {
-        if (err) {
-            console.log(err)
-        }
-        if (doc) {
-            console.log(doc)
-            console.log(doc.long_url.toString())
-            // return res.redirect('http://google.com')
-            window.location.href = doc.long_url
+    Url.findOne({_id: id}, function (err, doc){
+    if (doc) {
+      console.log('http://' + doc.long_url)
+      res.redirect(301, 'http://' + doc.long_url);
 
-        } else {
-            res.redirect("/shitshow")
-        }
-    })
+    } else {
+      console.log("shit")
+    }
+  });
+
    
 })
 
